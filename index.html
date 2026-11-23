@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Kira Kira ✨ Responsive Multi-Select Pure CSS Gallery</title>
+  <style>
+    /* Google Fonts & Base Reset */
+    @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@400;700;900&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', 'Gaegu', -apple-system, BlinkMacSystemFont, "Segoe UI", cursive, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffeef8 0%, #fdf2f8 25%, #f5f3ff 50%, #eff6ff 75%, #fff1f2 100%);
+      background-size: 300% 300%;
+      animation: dreamySky 15s ease infinite alternate;
+      color: #5c3a4d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Dreamy Pastel Sky Animation */
+    @keyframes dreamySky {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Floating Sparkles in Background */
+    body::before,
+    body::after {
+      content: "✨";
+      position: fixed;
+      font-size: 1.8rem;
+      opacity: 0.6;
+      animation: sparkleFloat 4s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      top: 12%;
+      left: 6%;
+      animation-delay: 0.5s;
+    }
+
+    body::after {
+      bottom: 12%;
+      right: 6%;
+      font-size: 2.2rem;
+      content: "💖";
+      animation-delay: 1.2s;
+    }
+
+    @keyframes sparkleFloat {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.9);
+        opacity: 0.4;
+      }
+
+      100% {
+        transform: translateY(-20px) rotate(25deg) scale(1.2);
+        opacity: 0.9;
+      }
+    }
+
+    /* Header Section */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .ribbon-banner {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff70a6, #ff9770);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 15px rgba(255, 112, 166, 0.4);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+      transform: rotate(-2deg);
+      animation: wiggle 3s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      100% {
+        transform: rotate(-2deg) scale(1);
+      }
+
+      50% {
+        transform: rotate(2deg) scale(1.05);
+      }
+    }
+
+    .header h1 {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ff4d80 0%, #b34bff 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255, 105, 180, 0.3));
+      word-break: keep-all;
+    }
+
+    .header p {
+      color: #9d688b;
+      font-size: 1.02rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(8px);
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 1.5px dashed #fbcfe8;
+      word-break: keep-all;
+      line-height: 1.5;
+    }
+
+    /* Main Container */
+    .gallery-container {
+      width: 100%;
+      max-width: 1240px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hidden Checkboxes for Pure CSS Filtering */
+    input[type="checkbox"].filter-checkbox {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Jelly Button Group */
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding: 4px;
+    }
+
+    /* Jelly Pudding Tab Button */
+    .filter-btn {
+      padding: 12px 24px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #834771;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 2.5px solid #ffccd5;
+      border-radius: 9999px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-btn .check-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffe4e6;
+      font-size: 0.8rem;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-3px) scale(1.04);
+      border-color: #ff758f;
+      color: #ff3366;
+      box-shadow: 0 12px 25px rgba(255, 117, 143, 0.45);
+    }
+
+    /* Active State when Checked */
+    #filter-nature:checked~.filter-buttons label[for="filter-nature"],
+    #filter-architecture:checked~.filter-buttons label[for="filter-architecture"],
+    #filter-animals:checked~.filter-buttons label[for="filter-animals"] {
+      background: linear-gradient(135deg, #ff477e, #ff70a6 40%, #ff9770 100%);
+      color: #ffffff;
+      border-color: #ffffff;
+      transform: translateY(-4px) scale(1.06) rotate(-1deg);
+      box-shadow: 0 12px 28px rgba(255, 71, 126, 0.55), 0 0 15px rgba(255, 182, 193, 0.8);
+      animation: jellyPulse 1.8s infinite;
+    }
+
+    #filter-nature:checked~.filter-buttons label[for="filter-nature"] .check-icon,
+    #filter-architecture:checked~.filter-buttons label[for="filter-architecture"] .check-icon,
+    #filter-animals:checked~.filter-buttons label[for="filter-animals"] .check-icon {
+      background: #ffffff;
+      color: #ff477e;
+      transform: rotate(360deg) scale(1.15);
+    }
+
+    @keyframes jellyPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 12px 28px rgba(255, 71, 126, 0.55), 0 0 15px rgba(255, 182, 193, 0.8);
+      }
+
+      50% {
+        box-shadow: 0 15px 35px rgba(255, 71, 126, 0.7), 0 0 25px rgba(255, 105, 180, 0.95);
+      }
+    }
+
+    .filter-tip {
+      text-align: center;
+      margin-bottom: 28px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #c04279;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      word-break: keep-all;
+    }
+
+    /* ============================================================
+       .photo.list : Responsive Grid for PC, Tablet & Mobile
+       ============================================================ */
+    /* [1] Desktop (PC): 4 columns (4x3 = 12 items) */
+    .photo.list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    /* [2] Large Tablet (<= 1024px): 3 columns */
+    @media (max-width: 1024px) {
+      .photo.list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+    }
+
+    /* [3] Small Tablet (<= 768px): 2 columns */
+    @media (max-width: 768px) {
+      body {
+        padding: 30px 16px 80px;
+      }
+
+      .header h1 {
+        font-size: 2.1rem;
+      }
+
+      .header p {
+        font-size: 0.92rem;
+      }
+
+      .photo.list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .filter-buttons {
+        gap: 10px;
+      }
+
+      .filter-btn {
+        padding: 10px 18px;
+        font-size: 0.92rem;
+      }
+    }
+
+    /* [4] Mobile (<= 600px): 1 column (Single-feed display) */
+    @media (max-width: 600px) {
+      body {
+        padding: 24px 14px 60px;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+      }
+
+      .header p {
+        font-size: 0.85rem;
+        padding: 6px 14px;
+      }
+
+      .ribbon-banner {
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+
+      /* Single column display for .photo.list on mobile */
+      .photo.list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .filter-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .filter-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+        font-size: 0.98rem;
+      }
+
+      .gallery-item {
+        aspect-ratio: 16 / 11;
+      }
+    }
+
+    /* Glassmorphism Card Style */
+    .gallery-item {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: #ffffff;
+      border: 3.5px solid #ffffff;
+      box-shadow: 0 10px 24px rgba(255, 175, 204, 0.35), 0 2px 6px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .gallery-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(255, 182, 193, 0.8), rgba(255, 255, 255, 0.1), rgba(186, 230, 253, 0.8));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-8px) scale(1.02) rotate(0.6deg);
+      border-color: #ffb3c6;
+      box-shadow: 0 18px 36px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 192, 203, 0.7);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+      filter: saturate(1.15) brightness(1.03);
+    }
+
+    /* Card Top Ribbon Sticker */
+    .ribbon-sticker {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #ff3366;
+      box-shadow: 0 4px 10px rgba(255, 71, 126, 0.25);
+      z-index: 3;
+      border: 1px solid #ffd1dc;
+    }
+
+    /* Card Bottom Info Overlay */
+    .card-info {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(92, 30, 62, 0.88) 0%, rgba(92, 30, 62, 0.25) 55%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+      z-index: 2;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #ffd166;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ============================================================
+       ✨ Pure CSS Multi-Select Filtering Mechanism (:has() + :checked) ✨
+       ============================================================ */
+    @keyframes kiraPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.75) translateY(18px) rotate(-2deg);
+      }
+
+      70% {
+        transform: scale(1.04) translateY(-3px) rotate(0.8deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotate(0deg);
+      }
+    }
+
+    /* Default State (Nothing checked): Show all 12 items */
+    .gallery-item {
+      display: block;
+      animation: kiraPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* When at least one checkbox is checked: Hide items by default */
+    .gallery-container:has(.filter-checkbox:checked) .gallery-item {
+      display: none;
+    }
+
+    /* Show items matching checked categories */
+    .gallery-container:has(#filter-nature:checked) .gallery-item.nature {
+      display: block;
+      animation: kiraPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .gallery-container:has(#filter-architecture:checked) .gallery-item.architecture {
+      display: block;
+      animation: kiraPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .gallery-container:has(#filter-animals:checked) .gallery-item.animals {
+      display: block;
+      animation: kiraPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="ribbon-banner">🎀 NO JAVASCRIPT · RESPONSIVE 🎀</div>
+    <h1>✨ 𝒦𝒾𝓇𝒶 𝒦𝒾𝓇𝒶 𝒫𝒶𝓈𝓉𝑒𝓁 𝒢𝒶𝓁𝓁𝑒𝓇𝓎 ✨</h1>
+    <p>₍ᐢ.ˬ.ᐢ₎ 4 columns on PC, responsive on tablet, single feed on mobile 💖</p>
+  </header>
+
+  <!-- Gallery Main Container -->
+  <div class="gallery-container">
+
+    <!-- 1. Pure CSS Multi-Select Hidden Checkboxes -->
+    <input type="checkbox" id="filter-nature" class="filter-checkbox">
+    <input type="checkbox" id="filter-architecture" class="filter-checkbox">
+    <input type="checkbox" id="filter-animals" class="filter-checkbox">
+
+    <!-- 2. Kira-Kira Jelly Multi-Select Filter Buttons -->
+    <div class="filter-buttons">
+      <label for="filter-nature" class="filter-btn">
+        <span class="check-icon">🌸</span>
+        <span>Fairy Nature (Nature · 4)</span>
+      </label>
+
+      <label for="filter-architecture" class="filter-btn">
+        <span class="check-icon">🏰</span>
+        <span>Dream Architecture (Architecture · 4)</span>
+      </label>
+
+      <label for="filter-animals" class="filter-btn">
+        <span class="check-icon">🐾</span>
+        <span>Fluffy Sweeties (Animals · 4)</span>
+      </label>
+    </div>
+
+    <div class="filter-tip">
+      <span>✨ Tip: Multi-select your favorite categories! All 12 items show when none are selected ✨</span>
+    </div>
+
+    <!-- 3. .photo.list : Responsive Grid (Single item on mobile, 4x3 on PC) -->
+    <div class="photo list">
+
+      <!-- ================= Nature (4 Items) ================= -->
+      <article class="gallery-item nature">
+        <span class="ribbon-sticker">🌸 Fairy Tale</span>
+        <img src="https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&w=800&q=80"
+          alt="Pink cherry blossoms">
+        <div class="card-info">
+          <span class="card-tag">🌸 NATURE</span>
+          <h2 class="card-title">Blushing Pink Cherry Blossoms</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item nature">
+        <span class="ribbon-sticker">✨ Sunset</span>
+        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80"
+          alt="Cotton candy sunset clouds">
+        <div class="card-info">
+          <span class="card-tag">🌸 NATURE</span>
+          <h2 class="card-title">Sweet Pastel Sunset Clouds</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item nature">
+        <span class="ribbon-sticker">🌷 Blossom</span>
+        <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=800&q=80"
+          alt="Blooming spring flowers">
+        <div class="card-info">
+          <span class="card-tag">🌸 NATURE</span>
+          <h2 class="card-title">Fresh Spring Flower Blossoms</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item nature">
+        <span class="ribbon-sticker">💧 Dew Drop</span>
+        <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
+          alt="Glistening morning dew">
+        <div class="card-info">
+          <span class="card-tag">🌸 NATURE</span>
+          <h2 class="card-title">Sparkling Morning Dew Drops</h2>
+        </div>
+      </article>
+
+      <!-- ================= Architecture (4 Items) ================= -->
+      <article class="gallery-item architecture">
+        <span class="ribbon-sticker">🏰 Dream Castle</span>
+        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80"
+          alt="Dreamy fairytale palace">
+        <div class="card-info">
+          <span class="card-tag">🏰 ARCHITECTURE</span>
+          <h2 class="card-title">Dreamy Pink Fairytale Castle</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item architecture">
+        <span class="ribbon-sticker">🎠 Carousel</span>
+        <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80"
+          alt="Twinkling nighttime carousel">
+        <div class="card-info">
+          <span class="card-tag">🏰 ARCHITECTURE</span>
+          <h2 class="card-title">Twinkling Nighttime Carousel</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item architecture">
+        <span class="ribbon-sticker">🎨 Pastel Town</span>
+        <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80"
+          alt="Colorful seaside town">
+        <div class="card-info">
+          <span class="card-tag">🏰 ARCHITECTURE</span>
+          <h2 class="card-title">Candy-Colored Seaside Town</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item architecture">
+        <span class="ribbon-sticker">☕ Cozy Cafe</span>
+        <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80"
+          alt="Romantic Santorini alleyway">
+        <div class="card-info">
+          <span class="card-tag">🏰 ARCHITECTURE</span>
+          <h2 class="card-title">Romantic Santorini Alleyway</h2>
+        </div>
+      </article>
+
+      <!-- ================= Animals (4 Items) ================= -->
+      <article class="gallery-item animals">
+        <span class="ribbon-sticker">🐾 Kitty</span>
+        <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=800&q=80"
+          alt="Adorable kitten with pink paws">
+        <div class="card-info">
+          <span class="card-tag">🐾 ANIMALS</span>
+          <h2 class="card-title">Cute Kitten with Pink Paws</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item animals">
+        <span class="ribbon-sticker">🐶 Fluffy Puppy</span>
+        <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80"
+          alt="Heart-melting fluffy puppy">
+        <div class="card-info">
+          <span class="card-tag">🐾 ANIMALS</span>
+          <h2 class="card-title">Heart-Melting Fluffy Puppy</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item animals">
+        <span class="ribbon-sticker">🐰 Bunny</span>
+        <img src="https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=800&q=80"
+          alt="Sweet baby bunny">
+        <div class="card-info">
+          <span class="card-tag">🐾 ANIMALS</span>
+          <h2 class="card-title">Carrot-Loving Baby Bunny</h2>
+        </div>
+      </article>
+
+      <article class="gallery-item animals">
+        <span class="ribbon-sticker">🦌 Bambi</span>
+        <img src="https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=800&q=80"
+          alt="Sparkling-eyed baby fawn">
+        <div class="card-info">
+          <span class="card-tag">🐾 ANIMALS</span>
+          <h2 class="card-title">Sparkling-Eyed Baby Fawn</h2>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
